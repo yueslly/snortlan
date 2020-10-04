@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [$1 == ""]
+then
+        echo "Bem vindo ao snortlan"
+        echo "exemplo de uso: $0 192.168.0"
+        echo "a ferramenta irá varrer de 1 à 254"
+        echo "essa versão conta apenas com a varredura de redes /24"
+else
+        for iprede in {1..254};
+        do
+                ping -c1 $1.$iprede | grep "64 bytes from" | cut -d" " -f 4 | c>
+        done
+fi
+
