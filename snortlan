@@ -2,14 +2,60 @@
 
 if [$1 == ""]
 then
-        echo "Bem vindo ao snortlan"
-        echo "exemplo de uso: $0 192.168.0"
-        echo "a ferramenta irá varrer de 1 à 254"
-        echo "essa versão conta apenas com a varredura de redes /24"
+	echo "Bem vindo ao snortlan"
+	echo "exemplo de uso: $0 192.168.0"
+	echo "a ferramenta irá varrer de 1 à 254"
+	echo "essa versão conta apenas com a varredura de redes /24"
 else
-        for iprede in {1..254};
-        do
-                ping -c1 $1.$iprede | grep "64 bytes from" | cut -d" " -f 4 | c>
-        done
-fi
+	echo "Digite o CIDR:"
+	echo "/8 = 1"
+	echo "/16 = 2"
+	echo "/24 = 3"
+	read cidr
+	if [ $cidr == "1" ]
+	then
+		clear
+		echo "Iniciando varredura:"
+		for iprede in $(seq 0 255)
+		do
+			for iprede2 in $(seq 0 255)
+			do
+				for iprede3 in $(seq 1 254)
+				do
+					ping -n -s1 -c1 $1.$iprede.$iprede2.$iprede3 | grep "9 bytes from" | cut -d" " -f 4 | cut -d":" -f 1
+				done
+			done
+		done
+		echo "Varredura concluída!!"
 
+	else
+		if [ $cidr == "2" ]
+		then
+			clear
+			echo "Iniciando varredura:"
+			for iprede in $(seq 0 255)
+			do
+				for iprede2 in $(seq 1 254)
+				do
+					ping -n -s1 -c1 $1.$iprede.$iprede2 | grep "9 bytes from" | cut -d" " -f 4 | cut -d":" -f 1
+				done
+			done
+			echo "Varredura concluída!!"
+
+		else
+			if [ $cidr == "3" ]
+			then
+				clear
+				echo "Iniciando varredura:"
+				for iprede in $(seq 1 254)
+				do
+					ping -n -s1 -c1 $1.$iprede | grep "9 bytes from" | cut -d" " -f 4 | cut -d":" -f 1
+				done
+				echo "Varredura concluída!!"
+
+			else
+				echo "Opção inválida, digite novamente ou digite 0 para sair"
+			fi
+		fi
+	fi
+fi
